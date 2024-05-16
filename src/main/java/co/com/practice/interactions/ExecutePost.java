@@ -31,11 +31,11 @@ public class ExecutePost implements Interaction {
                         .with(request -> request.
                                 contentType(JSON)
                                 .body(body)
-                                .relaxedHTTPSValidation()
+                                .relaxedHTTPSValidation().log().all()
                         )
         );
 
-        if(SerenityRest.lastResponse().statusCode() != HttpStatus.SC_CREATED){
+        if(SerenityRest.lastResponse().statusCode() != HttpStatus.SC_OK){
             throw new ErrorServicesException(EXCEPTION_ERROR_CONSUMPTION_SERVICE);
         }
     }

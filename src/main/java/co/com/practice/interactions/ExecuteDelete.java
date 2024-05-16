@@ -8,32 +8,39 @@ import net.serenitybdd.screenplay.Interaction;
 import net.serenitybdd.screenplay.Tasks;
 import net.serenitybdd.screenplay.rest.interactions.Delete;
 import org.apache.http.HttpStatus;
+
+import java.util.List;
+import java.util.Map;
+
 import static co.com.practice.utils.constants.Constants.EXCEPTION_ERROR_CONSUMPTION_SERVICE;
 import static io.restassured.http.ContentType.JSON;
 
 public class ExecuteDelete implements Interaction {
     private final String resource;
+    private final List<Map<String, String>> id;
 
-    public ExecuteDelete(String resource) {
+    public ExecuteDelete(String resource, List<Map<String, String>> id) {
         this.resource = resource;
+        this.id = id;
     }
 
-    public static ExecuteDelete service(String resource) {
-        return Tasks.instrumented(ExecuteDelete.class, resource);
+    public static ExecuteDelete service(String resource, List<Map<String, String>> id) {
+        return Tasks.instrumented(ExecuteDelete.class, resource, id);
     }
 
     @Override
     public <T extends Actor> void performAs(T actor) {
         SerenityRest.reset();
         actor.attemptsTo(
-                Delete.from(resource)
+                Delete.from(resource+"/"+id.get(0).get("id"))
                         .with(request -> request.
-                                contentType(JSON).params(TestData.getData())
-                                .relaxedHTTPSValidation()
+                                contentType(JSON)
+                                .cookie("token", id.get(0).get("token"))
+                                .relaxedHTTPSValidation().log().all()
                         )
         );
 
-        if(SerenityRest.lastResponse().statusCode() != HttpStatus.SC_NO_CONTENT){
+        if(SerenityRest.lastResponse().statusCode() != HttpStatus.SC_CREATED){
             throw new ErrorServicesException(EXCEPTION_ERROR_CONSUMPTION_SERVICE);
         }
     }
