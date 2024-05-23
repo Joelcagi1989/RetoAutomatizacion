@@ -24,7 +24,7 @@ import static io.cucumber.junit.CucumberOptions.SnippetType;
 public class PostCreateBookingRunner {
       /*  @BeforeSuite
         public static void test() throws IOException, InvalidFormatException {
-                DataToFeature.overrideFeatureFiles(".src/test/resources/features/post_create_booking.feature");
+                DataToFeature.overrideFeatureFiles("./src/test/resources/features/post_create_booking.feature");
         }
        */
 }
